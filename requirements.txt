@@ -1,0 +1,5 @@
+matplotlib==3.4.1
+regex==2021.4.4
+numpy==1.19.2
+html5lib==1.1
+pandas==1.2.4

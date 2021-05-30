@@ -13,4 +13,4 @@ class Driver:
     def __str__(self):
         return f"{self.name} has: \n" \
                f"{self.poles} Poles \n" \
-               f"{self.wins}  Wins"
+               f"{self.wins} Wins"
