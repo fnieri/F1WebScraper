@@ -1,7 +1,7 @@
 import pandas as pd
 from urllib.request import urlopen
-from .const import *
-from .errors import *
+from const import *
+from errors import *
 import html5lib
 import numpy as np
 from abc import ABCMeta, abstractmethod
@@ -11,10 +11,11 @@ class Scraper(metaclass=ABCMeta):
     def __init__(self, year : int = 2020):
         self.year = year
         self.url = self.url_builder()
-        self.table = pd.read_html(str(self.url))
+        self.tables = pd.read_html(str(self.url))       #All the tables in year
 
     @abstractmethod
     def _get_table(self):
+        """Load each year's required table"""
         pass
 
     def get_table(self):
@@ -22,6 +23,7 @@ class Scraper(metaclass=ABCMeta):
 
     @abstractmethod
     def _load(self):
+        """Load year"""
         pass
 
     def load(self):
@@ -31,7 +33,7 @@ class Scraper(metaclass=ABCMeta):
         """
         Build url from given year if year is correct
         Returns:
-            years' url
+            (str) : years' url
         """
         assert isinstance(self.year, int)
         year_correctness = self.year_is_correct()
@@ -39,8 +41,7 @@ class Scraper(metaclass=ABCMeta):
             raise InvalidYear(self.year)
         if self.year > 1980:
             return 'https://en.wikipedia.org/wiki/' + str(self.year) + '_Formula_One_World_Championship'
-        elif self.year < 1982:
-            return 'https://en.wikipedia.org/wiki/' + str(self.year) + '_Formula_One_season'
+        return 'https://en.wikipedia.org/wiki/' + str(self.year) + '_Formula_One_season'
 
     def year_is_correct(self):
         """Check if given year is correct"""
@@ -48,35 +49,38 @@ class Scraper(metaclass=ABCMeta):
 
 
 class PoleScraper(Scraper):
+    """Class used for scraping pole-win mean"""
     def __init__(self, year : int = 1960):
         super().__init__(year)
-        self.pole_table = None
-        self.pole_sitters = None
-        self.winners = None
-        self.whatispole = "Pole position"
-        self.whatiswinner = "Winning driver"
+        self.pole_table = None  #Wikipedia race table
+        self.pole_sitters = None    #Numpy Array containing pole sitters
+        self.winners = None     #Numpy array containing winners
+        self.whatispole = "Pole position"   #Pole position name may differ from year to year
+        self.whatiswinner = "Winning driver"    #As does Winning driver
 
     def _get_table(self):
         """Get table from said year"""
-        for i in range(1, len(self.table)):
-            if "Pole position" in self.table[i] or "Pole Position" in self.table[i]:
-                if "Pole position" in self.table[i]:
+        for column in range(1, len(self.tables)):     #Go through each table until Pole position is in it
+            if "Pole position" in self.tables[column] or "Pole Position" in self.tables[column]:
+                if "Pole position" in self.tables[column]:
                     self.whatispole = "Pole position"
                 else:
                     self.whatispole = "Pole Position"
-                if "Winning driver" in self.table[i]:
+                if "Winning driver" in self.tables[column]:
                     self.whatiswinner = "Winning driver"
                 else:
                     self.whatiswinner = "Winning Driver"
-                self.pole_table = self.table[i]
+                self.pole_table = self.tables[column]
                 break
 
     def _get_pole(self):
         """Numpy array of pole sitters"""
+        #Put pole sitters in pole position column in numpy array
         self.pole_sitters = self.pole_table[self.whatispole].to_numpy()
 
     def _get_winners(self):
         """Numpy array of winners"""
+        # Put winners in wiiners' column in numpy array
         self.winners = self.pole_table[self.whatiswinner].to_numpy()
 
     def _load(self):
@@ -89,25 +93,24 @@ class PoleScraper(Scraper):
 class StandingsScraper(Scraper):
     def __init__(self, year):
         super().__init__(year)
-        self.standings_table = None
+        self.standings_table = None #Wikipedia years' standings table
         self.races = None
 
     def _get_table(self):
-        for i in range(2, len(self.table)):
-            if "ITA" in self.table[i] or "MON" in self.table[i] and "Driver" in self.table[i]:
-                self.standings_table = self.table[i]
+        for table in range(2, len(self.tables)):
+            #Not the most effective way but Italy and Monaco are always in a year
+            if "ITA" in self.tables[table] or "MON" in self.tables[table] and "Driver" in self.tables[table]:
+                self.standings_table = self.tables[table]
                 break
 
     def _get_race_results(self):
         columns = self.standings_table.columns[2:-1]
-        self.races = np.empty([len(self.standings_table.columns[2:-1]), (len(self.standings_table[columns[1]]))], dtype=object)
-        iter1 = 0
-        for column in columns:
-            iter2 = 0
-            for j in self.standings_table[column]:
-                self.races[iter1][iter2] = j
-                iter2 += 1
-            iter1 += 1
+        self.races = np.empty([len(self.standings_table.columns[2:-1]), (len(self.standings_table[columns[1]]))-1], dtype=object)
+        #races is an empty array of all races
+        for array_row, column in enumerate(columns):  #Get race result
+            for array_col, result in enumerate((self.standings_table[column])[:-1]): #Place result in array
+                self.races[array_row][array_col] = result
+
 
     def _load(self):
         self.get_table()
@@ -116,3 +119,9 @@ class StandingsScraper(Scraper):
     @property
     def get_races(self):
         return self.races
+
+class WinnerScraper(Scraper):
+    pass
+
+class DN_S_QScraper(Scraper):
+    pass
