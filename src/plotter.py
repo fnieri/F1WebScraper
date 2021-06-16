@@ -87,7 +87,8 @@ class RetiredPlotter(Plotter):
             print(f"Scraping year {year}")
             year2scrape = StandingsScraper(year)
             year2scrape.load()
-            print(year2scrape.races)
+      #      print(year2scrape.standings_table)
+      #      print(year2scrape.races)
             retired = 0
             participants = 0
             for race in year2scrape.races:
@@ -98,7 +99,7 @@ class RetiredPlotter(Plotter):
                         participants += 1
                 this_race_percent = (retired/participants) * 100
                 this_year_mean.append(this_race_percent)
-            self.ret_mean[iterator] = sum(this_year_mean)
+            self.ret_mean[iterator] = sum(this_year_mean)/len(this_year_mean)
             self.retired[iterator] = retired
             iterator += 1
 
@@ -133,5 +134,5 @@ class DisqualifiedPlotter(Plotter):
         plt.bar(self.years, self.disqualified)
         plt.show()
 
-a = RetiredPlotter()
+a = RetiredPlotter(1950,1950)
 a.F1plot()

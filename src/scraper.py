@@ -104,11 +104,17 @@ class StandingsScraper(Scraper):
                 break
 
     def _get_race_results(self):
-        columns = self.standings_table.columns[2:-1]
-        self.races = np.empty([len(self.standings_table.columns[2:-1]), (len(self.standings_table[columns[1]]))-1], dtype=object)
+        race_or_source = self.standings_table.iloc[-1].tolist()
+        print(race_or_source)
+        if "Source" in race_or_source[1]:
+            last_index = -2
+        else:
+            last_index = -1
+        columns = self.standings_table.columns[2:last_index]
+        self.races = np.empty([len(self.standings_table.columns[2:last_index]), (len(self.standings_table[columns[1]]))+last_index], dtype=object)
         #races is an empty array of all races
         for array_row, column in enumerate(columns):  #Get race result
-            for array_col, result in enumerate((self.standings_table[column])[:-1]): #Place result in array
+            for array_col, result in enumerate((self.standings_table[column])[:last_index]): #Place result in array
                 self.races[array_row][array_col] = result
 
 
