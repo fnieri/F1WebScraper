@@ -50,38 +50,32 @@ class Scraper(metaclass=ABCMeta):
 
 class PoleScraper(Scraper):
     """Class used for scraping pole-win mean"""
-    def __init__(self, year : int = 1960):
+    def __init__(self, year: int = 1960):
         super().__init__(year)
         self.pole_table = None  #Wikipedia race table
-        self.pole_sitters = None    #Numpy Array containing pole sitters
-        self.winners = None     #Numpy array containing winners
-        self.whatispole = "Pole position"   #Pole position name may differ from year to year
-        self.whatiswinner = "Winning driver"    #As does Winning driver
+        self.pole_sitters_array = None    #Numpy Array containing pole sitters
+        self.winners_array = None     #Numpy array containing winners
+        self.pole = "Pole position"   #Pole position name may differ from year to year
+        self.winner = "Winning driver"    #As does Winning driver
 
     def _get_table(self):
         """Get table from said year"""
         for column in range(1, len(self.tables)):     #Go through each table until Pole position is in it
             if "Pole position" in self.tables[column] or "Pole Position" in self.tables[column]:
-                if "Pole position" in self.tables[column]:
-                    self.whatispole = "Pole position"
-                else:
-                    self.whatispole = "Pole Position"
-                if "Winning driver" in self.tables[column]:
-                    self.whatiswinner = "Winning driver"
-                else:
-                    self.whatiswinner = "Winning Driver"
+                self.pole = "Pole position" if "Pole position" in self.tables[column] else "Pole Position"
+                self.winner = "Winning driver" if "Winning driver" in self.tables[column] else "Winning Driver"
                 self.pole_table = self.tables[column]
                 break
 
     def _get_pole(self):
         """Numpy array of pole sitters"""
         #Put pole sitters in pole position column in numpy array
-        self.pole_sitters = self.pole_table[self.whatispole].to_numpy()
+        self.pole_sitters_array = self.pole_table[self.pole].to_numpy()
 
     def _get_winners(self):
         """Numpy array of winners"""
         # Put winners in wiiners' column in numpy array
-        self.winners = self.pole_table[self.whatiswinner].to_numpy()
+        self.winners_array = self.pole_table[self.winner].to_numpy()
 
     def _load(self):
         """Load this year's pole and winners"""
@@ -105,18 +99,19 @@ class StandingsScraper(Scraper):
 
     def _get_race_results(self):
         race_or_source = self.standings_table.iloc[-1].tolist()
-        print(race_or_source)
         if "Source" in race_or_source[1]:
+            #Check if source row is at the end of the table, this means that we won't need to scrape the last
+            #two rows because they contain nothing of interest
             last_index = -2
         else:
             last_index = -1
         columns = self.standings_table.columns[2:last_index]
-        self.races = np.empty([len(self.standings_table.columns[2:last_index]), (len(self.standings_table[columns[1]]))+last_index], dtype=object)
+        self.races = np.empty([len(self.standings_table.columns[2:last_index]), (len(self.standings_table[columns[1]]))+ \
+                               last_index], dtype=object)
         #races is an empty array of all races
         for array_row, column in enumerate(columns):  #Get race result
             for array_col, result in enumerate((self.standings_table[column])[:last_index]): #Place result in array
                 self.races[array_row][array_col] = result
-
 
     def _load(self):
         self.get_table()

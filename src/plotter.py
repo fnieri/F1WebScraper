@@ -38,13 +38,12 @@ class PolePlotter(Plotter):
 
     def _get_data(self):
         """Get pole - win relation from start year to end year"""
-        iterator = 0
-        for pole_year in range(self.start, self.end+1):
-            print(f"Scraping year {pole_year}")
+        for iterator, pole_year in enumerate(range(self.start, self.end+1)):
             end_result = 0
             year = PoleScraper(pole_year)  #Scrape data from year
-            year.load() #Load year
-            pole_sitters, winners = year.pole_sitters, year.winners #Get numpy arrays for sitters and winners
+            year.load()     #Load year
+            print(f"Scraping year {pole_year}", pole_year.url)
+            pole_sitters, winners = year.pole_sitters_array, year.winners_array  #Get numpy arrays for sitters and winners
             for sitter, winner in zip(pole_sitters, winners):
                 sitter, winner = re.sub("[\(\[].*?[\)\]]", "", sitter), re.sub("[\(\[].*?[\)\]]", "", winner)
                 # Remove source brackets
@@ -56,11 +55,10 @@ class PolePlotter(Plotter):
                     self.drivers[winner] = Driver(winner)
                 self.drivers[winner].add_win()
                 self.drivers[winner].add_year(pole_year)
-                if sitter == winner:
+                if sitter in winner:        #In the early days
                     end_result += 1
             this_year_prob = (end_result / pole_sitters.size) * 100
             self.prob[iterator] = this_year_prob    #Add probability of the year
-            iterator += 1
 
     def _F1plot(self):
         """Bar plot for years and probability"""
@@ -72,36 +70,35 @@ class PolePlotter(Plotter):
         for i in self.drivers:
             print(self.drivers[i])
 
+
 class RetiredPlotter(Plotter):
     def __init__(self, start_year=1950, end_year=LAST_YEAR):
         super().__init__(start_year, end_year)
-        self.retired = [0 for i in range(start_year, end_year + 1)]
-        self.ret_mean = [0 for i in range(self.start, self.end + 1)]
+        self.retired = [0 for _ in range(self.start, self.end + 1)]
+        self.ret_mean = [0 for _ in range(self.start, self.end + 1)]
 
     def _get_data(self):
         """Get retired data"""
-        iterator = 0
-
-        for year in range(self.start, self.end + 1):
+        for iterator, year in enumerate(range(self.start, self.end + 1)):
             this_year_mean = []
-            print(f"Scraping year {year}")
+            retired, retired_total, participants = 0, 0, 0
             year2scrape = StandingsScraper(year)
             year2scrape.load()
-      #      print(year2scrape.standings_table)
-      #      print(year2scrape.races)
-            retired = 0
-            participants = 0
+            print(f"Scraping year {year}", year2scrape.url)
+
             for race in year2scrape.races:
                 for result in race:
                     if "RET" in str(result) or "Ret" in str(result):
                         retired += 1
-                    if result != "nan":
+                    if str(result) != "nan":    #Nan means driver didn't participate
                         participants += 1
-                this_race_percent = (retired/participants) * 100
-                this_year_mean.append(this_race_percent)
+                if participants != 0:   #In 2020 there are about 15 empty rows
+                    this_race_percent = (retired/participants) * 100
+                    this_year_mean.append(this_race_percent)
+                    retired_total += retired
+                retired, participants = 0, 0
             self.ret_mean[iterator] = sum(this_year_mean)/len(this_year_mean)
-            self.retired[iterator] = retired
-            iterator += 1
+            self.retired[iterator] = retired_total
 
     def _F1plot(self):
         self.get_data()
@@ -116,23 +113,26 @@ class DisqualifiedPlotter(Plotter):
         self.disqualified = [0 for i in range(start_year, end_year + 1)]
 
     def _get_data(self):
-        iterator = 0
-        for disq_year in range(self.start, self.end + 1):
-            print(f"Scraping year {disq_year}")
-            year = StandingsScraper(disq_year) #Scrape data from year
-            year.load() #Load year values
+        for iterator, disq_year in enumerate(range(self.start, self.end + 1)):
+
+            year = StandingsScraper(disq_year)  #Scrape data from year
+            year.load()     #Load year values
+            print(f"Scraping year {disq_year}", disq_year.url)
             disqualified = 0
-            for races in year.races: #Iterate over each race
+            for races in year.races:    #Iterate over each race
                 for race in races:
-                    if race == "DSQ":
+                    if "DSQ" in str(race) or str(race) == "DSQ":
                         disqualified += 1
             self.disqualified[iterator] = disqualified
-            iterator += 1
 
     def _F1plot(self):
         self.get_data()
         plt.bar(self.years, self.disqualified)
         plt.show()
 
-a = RetiredPlotter(1950,1950)
+
+a = RetiredPlotter()
 a.F1plot()
+#b = PolePlotter()
+#b.get_data()
+#b.show_drivers()
