@@ -1,15 +1,15 @@
 import matplotlib.pyplot as plt
-from scraper import *
-from const import *
+from .scraper import *
+from .const import *
 import numpy as np
-from driver import *
+from .driver import *
 import regex as re
 from abc import ABCMeta, abstractmethod
 
 
 class Plotter(metaclass=ABCMeta):
     """Metaclass representing general Plotter"""
-    def __init__(self, start_year = 1950, end_year = LAST_YEAR):
+    def __init__(self, start_year=1950, end_year=LAST_YEAR):
         self.start = start_year
         self.end = end_year
         self.years = [i for i in range(self.start, self.end + 1)]
@@ -114,7 +114,6 @@ class DisqualifiedPlotter(Plotter):
 
     def _get_data(self):
         for iterator, disq_year in enumerate(range(self.start, self.end + 1)):
-
             year = StandingsScraper(disq_year)  #Scrape data from year
             year.load()     #Load year values
             print(f"Scraping year {disq_year}", disq_year.url)
@@ -131,8 +130,8 @@ class DisqualifiedPlotter(Plotter):
         plt.show()
 
 
-a = RetiredPlotter()
-a.F1plot()
+#a = RetiredPlotter()
+#a.F1plot()
 #b = PolePlotter()
 #b.get_data()
 #b.show_drivers()
