@@ -1,6 +1,24 @@
-The aim of this project is to scrape data from a given F1 year Wikipedia Page and get the stats from said year.
-I'm doing this project for a friends' Stats Course and for fun, if you see any bugs, please report them.
-Stats that can be scraped.
-Pole - win mean.	
-Retirements per year
-Disqualifications per year
+# F1 Web Scraper
+F1 web scraper is a tool that is used to scrape data 
+from a range of years or from a single year.
+Current scrapable stats are:
+- Pole - win mean for each year
+- Retirement rates for each year
+- Disqualification rates for each year
+
+(CSV export is WIP)
+
+## Installation 
+To install the packages needed to run this scraper you'll need to run
+```bash
+pip install -r requirements.txt
+```
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue 
+first to discuss what you would like to change.
+
+##Issues and bugs
+You're welcome to report any issues that you may encounter, this is 
+my first project regarding Web Scraping and there may be many improvements
+to be made and bugs to be fixed, please open an issue to report a bug.

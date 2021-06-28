@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from .scraper import *
-from .const import *
+from scraper import *
+from const import *
 import numpy as np
-from .driver import *
+from driver import *
 import regex as re
 from abc import ABCMeta, abstractmethod
 
@@ -27,6 +27,14 @@ class Plotter(metaclass=ABCMeta):
 
     def get_data(self):
         self._get_data()
+
+    @abstractmethod
+    def _change_years(self, start, end):
+        pass
+
+    def change_years(self, start, end):
+        self.start = start
+        self.end = end
 
 
 class PolePlotter(Plotter):
@@ -70,6 +78,10 @@ class PolePlotter(Plotter):
         for i in self.drivers:
             print(self.drivers[i])
 
+    def _change_years(self, start, end):
+        self.start = start
+        self.end = end
+
 
 class RetiredPlotter(Plotter):
     def __init__(self, start_year=1950, end_year=LAST_YEAR):
@@ -106,6 +118,10 @@ class RetiredPlotter(Plotter):
         plt.bar(self.years, self.ret_mean)
         plt.show()
 
+    def _change_years(self, start, end):
+        self.start = start
+        self.end = end
+
 
 class DisqualifiedPlotter(Plotter):
     def __init__(self, start_year = 1950, end_year = LAST_YEAR):
@@ -129,6 +145,9 @@ class DisqualifiedPlotter(Plotter):
         plt.bar(self.years, self.disqualified)
         plt.show()
 
+    def _change_years(self, start, end):
+        self.start = start
+        self.end = end
 
 #a = RetiredPlotter()
 #a.F1plot()
