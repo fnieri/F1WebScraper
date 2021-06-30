@@ -18,7 +18,11 @@ pip install -r requirements.txt
 Pull requests are welcome. For major changes, please open an issue 
 first to discuss what you would like to change.
 
-##Issues and bugs
+## Issues and bugs
 You're welcome to report any issues that you may encounter, this is 
 my first project regarding Web Scraping and there may be many improvements
 to be made and bugs to be fixed, please open an issue to report a bug.
+
+## WIP
+Code is still work in progress, so some functions may still not be fully functional
+or optimised.2
