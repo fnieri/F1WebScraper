@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from scraper import *
 from sources.const import *
 import numpy as np
 from sources.driver import *

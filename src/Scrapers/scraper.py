@@ -47,9 +47,3 @@ class Scraper(metaclass=ABCMeta):
         """Check if given year is correct"""
         return 1950 <= self.year <= LAST_YEAR
 
-
-class WinnerScraper(Scraper):
-    pass
-
-class DN_S_QScraper(Scraper):
-    pass

@@ -8,11 +8,14 @@ Current scrapable stats are:
 
 (CSV export is WIP)
 
-## Installation 
+## Dependencies 
 To install the packages needed to run this scraper you'll need to run
 ```bash
 pip install -r requirements.txt
 ```
+
+## Runnning the script
+To run the script you'll just need to
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue 
@@ -25,4 +28,4 @@ to be made and bugs to be fixed, please open an issue to report a bug.
 
 ## WIP
 Code is still work in progress, so some functions may still not be fully functional
-or optimised.2
+or optimised.

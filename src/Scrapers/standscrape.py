@@ -1,4 +1,4 @@
-from scraper import *
+from .scraper import *
 
 
 class StandingsScraper(Scraper):
@@ -27,7 +27,10 @@ class StandingsScraper(Scraper):
 
     def get_race_names(self):
         self.get_table()
-        self.race_names = self.standings_table[self.source_index()]
+        idx = self.source_index()
+        self.race_names = self.standings_table.iloc[idx].tolist()
+        self.race_names = self.race_names[2:-1]
+        return self.race_names
 
     def source_index(self):
         race_or_source = self.standings_table.iloc[-1].tolist()

@@ -1,6 +1,6 @@
 from plotter import *
-from scrapers.polescrape import *
-from scrapers.standscrape import *
+from Scrapers.polescrape import *
+from Scrapers.standscrape import *
 
 
 class RetiredPlotter(Plotter):
@@ -10,13 +10,19 @@ class RetiredPlotter(Plotter):
         self.ret_mean = [0 for _ in range(self.start, self.end + 1)]
 
     def _get_data(self, start, end):
-        """Get retired data"""
+        """
+        Get retired data from start to end year
+        Parameters:
+            start (int) : Starting year
+            end (int) : End year
+        """
         for iterator, year in enumerate(range(self.start, self.end + 1)):
             this_year_mean = []
             retired, retired_total, participants = 0, 0, 0
             year2scrape = StandingsScraper(year)
             year2scrape.load()
             print(f"Scraping year {year}", year2scrape.url)
+
             for race in year2scrape.races:
                 for result in race:
                     if "RET" in str(result) or "Ret" in str(result):
@@ -28,16 +34,29 @@ class RetiredPlotter(Plotter):
                     this_year_mean.append(this_race_percent)
                     retired_total += retired
                 retired, participants = 0, 0
+
             self.ret_mean[iterator] = sum(this_year_mean)/len(this_year_mean)
             self.retired[iterator] = retired_total
 
     def _F1plot(self, start, end):
+        """
+        Plot retirement graph from start year to end year
+        Parameters:
+            start (int) : Starting year
+            end (int) : End year
+        """
         self.get_data(start, end)
         # plt.bar(self.years, self.retired)
         plt.bar(self.years, self.ret_mean)
         plt.show()
 
     def _update(self, start, end):
+        """
+        Update class when years range is changed
+        Parameters:
+            start (int) : Starting year
+            end (int) : End year
+        """
         self.start = start
         self.end = end
         self.retired = [0 for _ in range(self.start, self.end + 1)]
