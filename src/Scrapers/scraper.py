@@ -1,7 +1,7 @@
 import pandas as pd
 from urllib.request import urlopen
-from sources.const import *
-from sources.errors import *
+from src.sources.const import *
+from src.sources.errors import *
 import html5lib
 import numpy as np
 from abc import ABCMeta, abstractmethod

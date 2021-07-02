@@ -1,21 +1,31 @@
 # F1 Web Scraper
 F1 web scraper is a tool that is used to scrape data 
 from a range of years or from a single year.
+##Features
 Current scrapable stats are:
 - Pole - win mean for each year
 - Retirement rates for each year
-- Disqualification rates for each year
-
-(CSV export is WIP)
+- Disqualification rates for each year 
+  
+These stats can be viewed through:
+- Bar graphs for multiple years 
+- Possibility to export pole stats to .csv
 
 ## Dependencies 
-To install the packages needed to run this scraper you'll need to run
+To install the packages needed to run this scraper you'll need to run:
 ```bash
 pip install -r requirements.txt
 ```
 
-## Runnning the script
-To run the script you'll just need to
+## Usage
+After cloning the repo and installing the required dependencies,
+you can simply run the script via:
+```bash
+python3 main.py
+```
+This will prompt you to the main menu where you will select the stats
+you wish to see
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue 

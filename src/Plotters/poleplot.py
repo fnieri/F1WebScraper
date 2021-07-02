@@ -1,8 +1,8 @@
 import os
 
 from .plotter import *
-from Scrapers.polescrape import *
-from Scrapers.standscrape import *
+from src.Scrapers.polescrape import *
+from src.Scrapers.standscrape import *
 import csv
 
 
@@ -82,8 +82,7 @@ class PolePlotter(Plotter):
             start (int) : Starting year
             end (int) : Ending year
         """
-        print(os.getcwd())
-        path = os.getcwd() + "\csv_out\\"
+        path = os.getcwd() + "\src\csv_out\\"
         csv_columns = ['Race', 'Pole sitter', 'Winner']
         for year in range(start, end + 1):  #Run year data if it wasn't ran once
             if not self.ran_once[year]:
@@ -98,8 +97,8 @@ class PolePlotter(Plotter):
                     writer.writeheader()
                     for data in year_csv:
                         writer.writerow(data)
-            except IOError:
-                print("I/O error")
+            except IOError as e:
+                print(e)
 
     def _F1plot(self, start, end):
         """Bar plot for years and probability"""

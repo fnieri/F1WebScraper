@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
-from sources.const import *
+from src.sources.const import *
 import numpy as np
-from sources.driver import *
+from src.sources.driver import *
 import regex as re
 from abc import ABCMeta, abstractmethod
-from sources.year import *
+from src.sources.year import *
 import time
 
 

@@ -1,4 +1,4 @@
-from Scrapers.scraper import *
+from src.Scrapers.scraper import *
 
 
 class PoleScraper(Scraper):
