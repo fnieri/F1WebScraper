@@ -105,6 +105,7 @@ class MainMenu:
             while True:
 
                 try:
+                    os.system('cls' if os.name == 'nt' else 'clear')
                     year = int(input("Enter the year you want to scrape (or 0 to go back): "))
                     if year == 0:
                         return
@@ -114,9 +115,14 @@ class MainMenu:
                     os.system('cls' if os.name == 'nt' else 'clear')
                     print("Enter a valid year")
                 else:
+
                     try:
-                        input("Enter anything to go back: ")
-                    except ValueError:
+                        os.system('cls' if os.name == 'nt' else 'clear')
+                        prompt = int(input("Enter 1 to open file with the default app for .csv files \n"
+                                           "or enter anything to return to main menu: "))
+                        if prompt == 1:
+                            os.startfile(os.getcwd() + "\src\csv_out\\" + f"{year}_data.csv", "open")
+                    except (TypeError, ValueError):
                         os.system('cls' if os.name == 'nt' else 'clear')
                         return
                     os.system('cls' if os.name == 'nt' else 'clear')
@@ -149,8 +155,21 @@ class MainMenu:
 
                     else:
                         self.pole.export_to_csv(start_year, end_year)
-                        print("Files have been exported, going back")
-                        time.sleep(2)
+                        print("Files have been exported")
+                        prompt = int(input("Enter 1 to select an year you want to open with the default app for .csv files \n"
+                                           "or enter anything to return to main menu: "))
+                        if prompt == 1:
+                            stop = False
+                            while not stop:
+                                year = int(input("Select the year: "))
+                                try:
+                                    os.startfile(os.getcwd() + "\src\csv_out\\" + f"{year}_data.csv", "open")
+                                except (FileNotFoundError, ValueError, TypeError):
+                                    os.system('cls' if os.name == 'nt' else 'clear')
+                                    print(f"Invalid year, please enter an year you have exported (current years are {start_year} - {end_year})")
+                                else:
+                                    input("Enter anything to go back to the main menu")
+                                    return
 
                 except (AssertionError, TypeError, ValueError):  # Wrong year, not int, blank
                     os.system('cls' if os.name == 'nt' else 'clear')
@@ -180,6 +199,7 @@ class MainMenu:
         os.system('cls' if os.name == 'nt' else 'clear')
         choice = False
         year = 1982
+
         while True:
             try:
                 if not choice:
@@ -196,23 +216,23 @@ class MainMenu:
                 try:
                     self.year_stats_print(year)
                     prompt = int(input("Enter the number: "))
-                    if prompt == 1:
+                    if prompt == POLE_BACK:
                         os.system('cls' if os.name == 'nt' else 'clear')
                         year -= 1
                         choice = True
-                    elif prompt == 2:
+                    elif prompt == POLE_EXIT:
                         os.system('cls' if os.name == 'nt' else 'clear')
                         return
-                    elif prompt == 3:
+                    elif prompt == POLE_FORWARD:
                         os.system('cls' if os.name == 'nt' else 'clear')
                         choice = True
                         year += 1
                 except (AssertionError, TypeError, ValueError):  # Not 1 or 2  or 3
                     os.system('cls' if os.name == 'nt' else 'clear')
-                    print("Enter 1 or 2")
+                    print("Enter 1 / 2 / 3")
 
     @staticmethod
-    def year_stats_print( year):
+    def year_stats_print(year):
         if year != 1950:
             print(f" [ 1 ] : View previous year ({year - 1})")
         print(" [ 2 ] : Go back")
@@ -236,24 +256,38 @@ class MainMenu:
                  3: " [ 3 ] : See drivers' stats (WIP) ", 4: " [ 4 ] : See an year's stats"}
         print(self.colors.GREEN + f"Current selection => {poled[number]}" + self.colors.ENDC)
 
-    #Export to csv
+    #Retirements data
+
+    def retirement_main(self):
+        pass
+
+    def retirement_main_print(self):
+        print(" [ 1 ] : Retirements per year bar graph")
+        print(" [ 2 ] : Percentage of retirements/participants per year")
+        print(" [ 3 ] : Percentage of retirements/participants per race in an year")
+        print(" [ 4 ] : Export year to .csv ( TBD ) ")
+
 
     #Select years prompt
 
     def select_years_main(self):
+        """
+        User pressed 4 in main menu
+        User is given the option to choose between multiple or single years
+        """
         os.system('cls' if os.name == 'nt' else 'clear')
         while True:
 
             try:
-                self.select_years_choice_print(0)
+                self.select_years_choice_print(0)   # Print selections
                 self.select_years_main_print()
 
-                number = int(input("Enter the number: "))
-                if number == 1 or number == 2:
+                NUMBER = int(input("Enter the number: "))
+                if NUMBER == 1 or NUMBER == 2:
                     os.system('cls' if os.name == 'nt' else 'clear')
-                    self.select_years_main_case1(number)
+                    self.select_years_main_case1(NUMBER)  #Number 1 = Multiple years 2 = Single year
 
-                elif number == 3:
+                elif NUMBER == 3:
                     os.system('cls' if os.name == 'nt' else 'clear')
                     return
 
@@ -297,6 +331,7 @@ class MainMenu:
                 print(self.colors.YELLOW + f"Enter an year between 1950 and {LAST_YEAR}" + self.colors.ENDC)
 
             else:
+
                 if number == 2:     #Single year
                     os.system('cls' if os.name == 'nt' else 'clear')
                     self.single_year = True
@@ -318,14 +353,18 @@ class MainMenu:
 
     def select_years_main_case2(self):
         tmp = self.end_year     #Save end year in case user goes back
+
         while True:
+
             try:
+
                 self.select_years_choice_print(1)
                 self.end_year = int(input("Enter end year (or 0 to change start year): "))
                 if self.end_year == 0:  #User goes back
                     self.end_year = tmp
                     return False
                 self.year_is_correct(self.end_year)     #cHECK Year correctness to proceed
+
             except (InvalidYear, TypeError, ValueError):
                 os.system('cls' if os.name == 'nt' else 'clear')
                 print(self.colors.YELLOW + f"Enter an year between 1950 and {LAST_YEAR}" + self.colors.ENDC)
