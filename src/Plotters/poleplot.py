@@ -1,8 +1,11 @@
 import os
 
 from .plotter import *
-from src.Scrapers.polescrape import *
-from src.Scrapers.standscrape import *
+from ..Scrapers.polescrape import *
+from ..Scrapers.standscrape import *
+from ..sources.const import *
+from ..sources.driver import *
+from ..sources.year import *
 import csv
 
 

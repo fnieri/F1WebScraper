@@ -1,6 +1,7 @@
 from plotter import *
 from Scrapers.standscrape import *
-
+from sources.errors import *
+from sources.const import *
 
 class DisqualifiedPlotter(Plotter):
     def __init__(self, start_year=1950, end_year=LAST_YEAR):

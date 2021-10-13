@@ -1,4 +1,4 @@
-from plotter import *
+from .plotter import *
 from Scrapers.polescrape import *
 from Scrapers.standscrape import *
 
